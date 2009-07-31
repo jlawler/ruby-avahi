@@ -1,0 +1,20 @@
+= Avahi for ruby
+
+A small Avahi library written in ruby. It uses the ruby-dbus DBus bindings to access
+the DBus Avahi interface.
+
+== Installation
+
+  sudo gem install pangdudu-ravahi --source=http://gems.github.com
+  
+== Usage
+
+to come...
+
+== Rule the universe! 
+
+Discover!
+
+== License
+
+GPL -> http://www.gnu.org/licenses/gpl.txt
