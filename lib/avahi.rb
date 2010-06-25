@@ -6,6 +6,9 @@ require 'thread'
 require 'avahi_service_list'
   
 module Avahi
+  FILTER_TYPES = [:stype, :status, :discovered, :domain, :description, :iface, :name, :protocol,:services,:updated_pass].freeze
+  UNIQ_REQS = [:stype, :domain, :description, :iface, :name ].freeze
+
   class AvahiManager
     def get_service_types
       Avahi.get_service_types
