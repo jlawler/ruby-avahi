@@ -2,11 +2,11 @@ require 'rubygems'
 require 'dbus'
 require 'thread'
 
-require 'avahi_constants'
-require 'avahi_manager'
-require 'avahi_service'
-require 'callback'
-require 'avahi_service_list'
+require 'avahi/constants'
+require 'avahi/manager'
+require 'avahi/service'
+require 'avahi/callback'
+require 'avahi/service_list'
  
 module Avahi
   FILTER_TYPES = [:stype, :status, :discovered, :domain, :description, :iface, :name, :protocol,:services,:updated_pass].freeze
