@@ -82,11 +82,9 @@ module Avahi
 
     #add service listeners
     def add_service_listeners
-raise "double add" if $SERVICE_LISTENERS
-$SERVICE_LISTENERS=true
+      raise "double add" if @_service_listeners_initialized
+      @_service_listeners_initialized = true
       pass_number = @pass_counter+=1
-      raise "Danger, @temp_services is NOT nil!" unless @temp_services.nil?
-      @temp_services = Hash.new{|h,e|h[e]=[]}
       #rofl_enable_trace
       service_types = get_service_types
       #will subscribe to all known services
@@ -101,9 +99,6 @@ $SERVICE_LISTENERS=true
         count=0
         use_bus{|bus|@bus.add_match(mr) { |msg| service_callback description,msg,service,pass_number,Time.now.to_i }}
       end
-      
-
-      @temp_services=nil
     end
     
     #service callback
@@ -120,7 +115,6 @@ $SERVICE_LISTENERS=true
         
     #adds a service to the list of running services
     def add_service_int description,msg,timestamp
-      #raise "Danger, @temp_services is nil!" if @temp_services.nil?
       s = AvahiService.new({:description => description ,:status => "running",:discovered => timestamp})
       p = msg.params
       #params look like this: 0 interface,1 protocol,2 name,3 type,4 domain
