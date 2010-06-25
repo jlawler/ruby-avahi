@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'dbus'
+require 'dbus_patch'
 require 'avahi_constants'
 
 module Avahi
