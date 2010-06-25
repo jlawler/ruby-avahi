@@ -17,11 +17,13 @@ Check the examples sub directory
 == Classes 
 
 The following classes are defined:
-Avahi::Callback     - These are representations of when (and how) you want to 
-  be notified when Avahi finds new services or removes old ones. 
-Avahi::Manager      - This is the wrapper class which handles creating and
-  maintaining the pieces of service creation/detection.
+
+Avahi::Callback     - These are representations of when (and how) you want to be notified when Avahi finds new services or removes old ones. 
+
+Avahi::Manager      - This is the wrapper class which handles creating and   maintaining the pieces of service creation/detection.
+
 Avahi::Service      - This is representation of a service
+
 Avahi::ServiceList  - This is the collection of services 
 
 == License
