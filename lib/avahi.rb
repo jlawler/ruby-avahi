@@ -3,6 +3,7 @@ require 'dbus'
 require 'avahi_constants'
 require 'avahi_service'
 require 'thread'
+require 'callback'
 require 'avahi_service_list'
   
 module Avahi
