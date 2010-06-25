@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-$:.unshift './lib'
+$:.unshift File.join(File.dirname(__FILE__),'../lib')
 require 'pp'
 require 'avahi'
 def dba 
