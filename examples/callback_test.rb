@@ -3,7 +3,7 @@ $:.unshift File.join(File.dirname(__FILE__),'../lib')
 require 'pp'
 require 'avahi'
 def avahi 
-  @avahi_dba||= Avahi::AvahiManager.new
+  @avahi_dba||= Avahi::Daemon.new
 end
 
 def avahid 
@@ -13,6 +13,7 @@ def avahid
     _t
   end
 end
+avahi.add_listener('_http._tcp')
 avahid.service_list.add_callback({:cb_type => :new_service, :service_type => '_http._tcp', :iface => :uniq}){|s|STDERR.puts "FOUND NEW HTTP SERVICE! #{s.inspect}"}
 begin
 avahid.avahi_loop_thread.join

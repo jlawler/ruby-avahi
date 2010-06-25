@@ -4,6 +4,7 @@ require 'thread'
 
 require 'avahi/constants'
 require 'avahi/manager'
+require 'avahi/daemon'
 require 'avahi/service'
 require 'avahi/callback'
 require 'avahi/service_list'

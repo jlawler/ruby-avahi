@@ -32,13 +32,12 @@ module Avahi
     def []= k,v
       @service_list[k]=v
     end 
-    def add s,pass_number
-      s.updated_pass=pass_number
+    def add s
       @service_list[s[:stype]] << s
     
       run_new_service_callbacks s.to_filter_hsh.merge(:cb_type => :new_service, :service => s)
     end
-    def remove msg,pass_number
+    def remove msg
       @remove_order ||= [:iface, :proto, :name, :stype, :domain, :unknown ]
       remove_hsh={}
       msg.params.size.times{|i|remove_hsh[@remove_order[i]]=msg.params[i]}
@@ -52,9 +51,6 @@ module Avahi
         end
       end.compact!
       nil
-    end
-    def close_type service_type,pass_number
-      @service_list[service_type].delete_if{|t|t.updated_pass < pass_number}
     end
   end
 end
