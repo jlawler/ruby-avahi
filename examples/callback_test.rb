@@ -19,5 +19,5 @@ avahid.avahi_loop_thread.join
 rescue  Exception => e
 pp avahid.service_list.to_hsh['_http._tcp']
 STDERR.puts "\n\n"
-raise
+STDERR.puts [e.class.to_s + ": " + e.message, *e.backtrace].join("\n")
 end

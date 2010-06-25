@@ -7,29 +7,36 @@ require 'avahi/manager'
 require 'avahi/service'
 require 'avahi/callback'
 require 'avahi/service_list'
- 
+
+require 'gdbm' rescue LoadError 
 module Avahi
   FILTER_TYPES = [:stype, :status, :discovered, :domain, :description, :iface, :name, :protocol,:services,:updated_pass].freeze
   UNIQ_REQS = [:stype, :domain, :description, :iface, :name ].freeze
+  AVAHI_SERVICE_DB = '/usr/lib/avahi/service-types.db'
   #some discoverable service types 
+  def silent?
+    false
+  end
+  module_function :silent?
   def get_service_types
-    return @@types = [`avahi-browse --all -bt`.split("\n"),`avahi-browse --all -bkt`.split("\n")].transpose.inject({}){|s,(k,v)|s.merge({k => v})}
-    types = {}
-    types["Workstation"] = "workstation"
-    types["SSH Remote Terminal"] = "ssh"
-    types["Website"] = "http"
-    types["Secure Website"] = "https"
-    types["iChat Presence"] = "presence"
-    types["PulseAudio Sound Server"] = "pulse-server"
-    types["Subversion Revision Control"] = "svn"
-    types["GIT"] = "git"
-    types["APT Package Repository"] = "apt"
-    types["WebDAV"] = "webdav"
-    types["Secure WebDAV"] = "webdavs"
-    types["Samba"] = "smb"
-    types["Robots IPC Cluster"] = "robots"
-    types["Alexandria"] = "alexandria"
-    return types
+    return @@types = begin
+      msg,res=nil,nil
+      if Object.const_defined?(:GDBM) 
+        msg = "Warning: Can't load ruby gdbm" if msg.nil? and not Object.const_defined?(:GDBM)
+        msg = "Warning: Can't find DB file" if msg.nil? and not File.exists?(AVAHI_SERVICE_DB)
+        if msg.nil?
+          res = GDBM.new(AVAHI_SERVICE_DB).to_hash.reject!{|k,v|k=~/\[/}.invert
+          msg = "ERROR Opening avahi service db" if res.nil?
+        end 
+      end
+      STDERR.puts msg + "\ndefaulting to avahi-browse hack" if msg and not silent? 
+      if res.nil?
+        raise "Unable to determine service types!" if `avahi-browse`==''
+        res ||=
+          [`avahi-browse --all -bt`.split("\n"),`avahi-browse --all -bkt`.split("\n")].transpose.inject({}){|s,(k,v)|s.merge({k => v})}
+      end
+      res      
+    end
   end
   module_function :get_service_types
 

@@ -57,7 +57,7 @@ module Avahi
       service_types = get_service_types
       #will subscribe to all known services
       service_types.each do |description,service| 
-        #puts "Now listening on #{description}!"
+        # puts "Now listening on #{description}!"
         browser_path = use_bus{@server.ServiceBrowserNew(IF_UNSPEC,PROTO_UNSPEC,service,@domain,0).first}
         #now we start the match rule definition
         mr = DBus::MatchRule.new
