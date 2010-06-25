@@ -18,4 +18,6 @@ begin
 dbat.avahi_loop_thread.join
 rescue  Exception => e
 pp dbat.service_list.to_hsh['_hattp._tcp']
+STDERR.puts "\n\n"
+raise
 end

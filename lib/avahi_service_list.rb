@@ -1,7 +1,7 @@
 module Avahi
   class ServiceList
     FILTER_TYPES = [:stype, :status, :discovered, :domain, :description, :iface, :name, :protocol,:services,:updated_pass].freeze
-    UNIQ_REQS = [:stype, :domain, :description, :iface, :name, :discovered ].freeze
+    UNIQ_REQS = [:stype, :domain, :description, :iface, :name ].freeze
     class ServiceFilter
       def initialize blk,opts={}
         @cb = blk
@@ -16,7 +16,26 @@ module Avahi
       def call_if_should(service_info)
         service_info = service_info.dup
         s = service_info.delete :service
+        if service_info[:cb_type] == :new_service
         call_cb(s) if self.should_run?(service_info)
+        else service_info[:cb_type] == :remove_service
+#STDERR.puts "\n\nREMOVING SERVICE COUNT #{@filter_state[:fired_for].size}"
+        trigger=service_info.dup
+        @filter_state[:fired_for].map!{|fired_for|
+          if  UNIQ_REQS.inject(true){|r,f|
+#STDERR.puts "TESTING " + [ fired_for[f],trigger[f]].inspect
+           r and    
+           (trigger[f].nil? or fired_for[f]==trigger[f] or Symbol===trigger[f])
+          } then 
+#STDERR.puts "REMOVING #{fired_for.inspect}"
+            nil
+          else
+            fired_for
+          end
+
+        }
+@filter_state[:fired_for].compact!
+        end
       end
       def should_run?(trigger)
 #STDERR.puts "\n\n\tSHOULD_RUN? " + trigger.inspect
@@ -87,7 +106,7 @@ last=nil
     end
     def run_new_service_callbacks new_service_info={}
       @callbacks.values.each {|filter|
-        next unless filter[:cb_type]==new_service_info[:cb_type]
+#        next unless filter[:cb_type]==new_service_info[:cb_type]
         filter.call_if_should(new_service_info)
       }
     end       
@@ -123,6 +142,7 @@ last=nil
       @service_list[remove_hsh[:stype]].map! do  |s|
         should_remove = [:iface,:domain,:stype,:name].inject(true){|r,t|r and s[t]==remove_hsh[t]}
         if should_remove
+         run_new_service_callbacks s.to_filter_hsh.merge(:cb_type => :remove_service, :service => s)
           nil
         else
           s

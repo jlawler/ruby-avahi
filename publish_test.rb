@@ -14,5 +14,5 @@ def dbat
   end
 end
 dba.publish(Avahi::IF_UNSPEC, Avahi::PROTO_UNSPEC, 'blahblaah','_hattp._tcp',35,[])
-sleep(3)
+sleep(5)
 
