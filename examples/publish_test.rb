@@ -13,6 +13,6 @@ def avahid
     _t
   end
 end
-avahi.publish(Avahi::IF_UNSPEC, Avahi::PROTO_UNSPEC, 'blahblaah','_http._tcp',35,[])
+avahi.publish(Avahi::Constants::IF_UNSPEC, Avahi::Constants::PROTO_UNSPEC, 'blahblaah','_http._tcp',35,[])
 sleep(5)
 

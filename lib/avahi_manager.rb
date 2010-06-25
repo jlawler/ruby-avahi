@@ -1,5 +1,6 @@
 module Avahi
   class AvahiManager
+    include Avahi::Constants
     def get_service_types
       Avahi.get_service_types
     end
