@@ -1,31 +1,41 @@
 module Avahi
   class AvahiManager 
     include Avahi::Constants
-    attr_accessor :main,:server 
-
-    def service_list 
-      @service_list 
-    end 
+    attr_accessor :service_list, :server
     def initialize
       @pass_counter=0
       @bus = DBus::SystemBus.instance
-      @service_list||=Avahi::ServiceList.new
-      @avahi = @bus.service('org.freedesktop.Avahi')
-      @server = @avahi.object('/')
-      @server.introspect
-      @server.default_iface = 'org.freedesktop.Avahi.Server'
-      @domain = @server.GetDomainName()[0]
-      @hostname = @server.GetHostName()[0]
-      @hostname_fqdn = @server.GetHostNameFqdn()[0]
-      interface,@protocol,name,aprotocol,@address,flags = @server.ResolveHostName(IF_UNSPEC,IF_UNSPEC,@hostname_fqdn,IF_UNSPEC,0)
-      entry_path = @server.EntryGroupNew()[0]
-      @entry = @avahi.object(entry_path)
-      @entry.introspect
-      @entry.default_iface = 'org.freedesktop.Avahi.EntryGroup'
+      @service_list=Avahi::ServiceList.new
+      interface,@protocol,name,aprotocol,@address,flags = self.server.ResolveHostName(IF_UNSPEC,IF_UNSPEC,self.default_fqdn,IF_UNSPEC,0)
+    end
+    def entry
+      @entry ||= begin
+        entry_path = self.server.EntryGroupNew()[0]
+        _entry = self.avahi.object(entry_path)
+        _entry.introspect
+        _entry.default_iface = 'org.freedesktop.Avahi.EntryGroup'
+        _entry
+      end
     end
 
+    def avahi;   @avahi ||= @bus.service('org.freedesktop.Avahi'); end
+    def server 
+      @server||=begin
+        _server = self.avahi.object('/')
+        _server.introspect
+        _server.default_iface = 'org.freedesktop.Avahi.Server'
+        _server
+      end
+    end
+
+    def default_domain
+      @default_domain||=@server.GetDomainName()[0]
+    end
+    def default_fqdn
+      @default_fqdn ||= @server.GetHostNameFqdn()[0]
+    end
     def add_listener stype
-      browser_path = @server.ServiceBrowserNew(IF_UNSPEC,PROTO_UNSPEC,stype,@domain,0).first
+      browser_path = @server.ServiceBrowserNew(IF_UNSPEC,PROTO_UNSPEC,stype,self.default_domain,0).first
       description='fake description'
       #now we start the match rule definition
       mr = DBus::MatchRule.new
@@ -59,14 +69,14 @@ module Avahi
     def resolve(interface, name, stype, domain)
       add_listener(stype)
       #interface, protocol, name, type, domain, host, aprotocol, address, port, text, flags
-      @server.ResolveService(interface, Avahi::PROTO_UNSPEC, name, stype, domain, Avahi::PROTO_UNSPEC, 0)
+      server.ResolveService(interface, Avahi::PROTO_UNSPEC, name, stype, domain, Avahi::PROTO_UNSPEC, 0)
     end
     
     #publish a service  
-    def publish(interface, protocol, name, stype, port, text, domain = @domain, hostname_fqdn = @hostname_fqdn)
+    def publish(interface, protocol, name, stype, port, text, domain = self.default_domain, hostname_fqdn = self.default_fqdn)
       add_listener(stype)
-      @entry.AddService(interface, protocol, 0, name, stype, domain, hostname_fqdn, port, text)
-      @entry.Commit()
+      entry.AddService(interface, protocol, 0, name, stype, domain, hostname_fqdn, port, text)
+      entry.Commit()
     end
   end
 end
