@@ -3,7 +3,6 @@ module Avahi
     include Avahi::Constants
     attr_accessor :service_list, :server
     def initialize
-      @pass_counter=0
       @bus = DBus::SystemBus.instance
       @service_list=Avahi::ServiceList.new
       interface,@protocol,name,aprotocol,@address,flags = self.server.ResolveHostName(IF_UNSPEC,IF_UNSPEC,self.default_fqdn,IF_UNSPEC,0)
@@ -27,7 +26,6 @@ module Avahi
         _server
       end
     end
-
     def default_domain
       @default_domain||=@server.GetDomainName()[0]
     end
