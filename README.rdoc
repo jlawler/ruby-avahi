@@ -3,6 +3,9 @@
 A small Avahi library written in ruby. It uses the ruby-dbus DBus bindings to access
 the DBus Avahi interface.
 
+I wrote this and am using it on some Ubuntu and Debian environments.  I have no idea
+if/how this will work on a Mac.
+
 == Installation
 
   sudo gem install pangdudu-ravahi --source=http://gems.github.com
