@@ -51,7 +51,7 @@ module Avahi
   
   #some discoverable service types 
   def get_service_types
-    return @@types = [`avahi-browse --all -bt`.split("\n"),`avahi-browse --all -bkt`.split("\n")].transpose.inject({}){|s,(k,v)|s.merge({k => v})}.merge({"Alexandria" => '_alexandria._tcp','hattp'=>'_hattp._tcp'})
+    return @@types = [`avahi-browse --all -bt`.split("\n"),`avahi-browse --all -bkt`.split("\n")].transpose.inject({}){|s,(k,v)|s.merge({k => v})}
     types = {}
     types["Workstation"] = "workstation"
     types["SSH Remote Terminal"] = "ssh"
