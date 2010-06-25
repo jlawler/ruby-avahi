@@ -3,10 +3,6 @@ require 'dbus'
 require 'avahi_constants'
 require 'thread'
 require 'avahi_service_list'
-$SERVICE_COUNT=Hash.new{|h,k|h[k]=0}
-def show_counts
-  $SERVICE_COUNT.to_a.sort_by(&:first)
-end
   
 class DBus::Connection
   def dbus_mutex
@@ -141,7 +137,7 @@ $SERVICE_LISTENERS=true
         mr.interface = "org.freedesktop.Avahi.ServiceBrowser"
         mr.path = browser_path
         count=0
-        use_bus{|bus|@bus.add_match(mr) { |msg|$SERVICE_COUNT[service]+=1 ;  service_callback description,msg,service,pass_number,Time.now.to_i }}
+        use_bus{|bus|@bus.add_match(mr) { |msg| service_callback description,msg,service,pass_number,Time.now.to_i }}
       end
       
 
