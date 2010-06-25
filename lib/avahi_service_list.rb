@@ -19,7 +19,7 @@ module Avahi
         call_cb(s) if self.should_run?(service_info)
       end
       def should_run?(trigger)
-STDERR.puts "\n\n\tSHOULD_RUN? " + trigger.inspect
+#STDERR.puts "\n\n\tSHOULD_RUN? " + trigger.inspect
 #        STDERR.puts "FIRED FOR " +  @filter_state[:fired_for].inspect
         special_filters={}
         if trigger[:cb_type]==:new_service
@@ -43,17 +43,17 @@ STDERR.puts "\n\n\tSHOULD_RUN? " + trigger.inspect
 last=nil
                 jwlt = true if  filters_to_test.inject(true){|r,f|
 #                  STDERR.puts "\t\t\t#{[fired_for,trigger].inspect}"
-                  STDERR.puts "\t\t#{f} #{[fired_for[f],trigger[f]].inspect} #{(trigger[f].nil? or fired_for[f]==trigger[f] or Symbol===trigger[f])}"
+#                  STDERR.puts "\t\t#{f} #{[fired_for[f],trigger[f]].inspect} #{(trigger[f].nil? or fired_for[f]==trigger[f] or Symbol===trigger[f])}"
 
                   r and ((last=f)||true)  and   
                   (trigger[f].nil? or fired_for[f]==trigger[f] or Symbol===trigger[f])
                 }
-                if jwlt
-                puts "\tNot firing for dup\n\t\t#{trigger.inspect}\n\t\t#{ fired_for.inspect}" 
-else
-puts " failed on #{f}" + [fired_for[f],trigger[f]].inspect   
-puts "\tNEW MATCH dup\n\t\t#{trigger.inspect}\n\t\t#{ fired_for.inspect}" 
-end 
+#                if jwlt
+#                puts "\tNot firing for dup\n\t\t#{trigger.inspect}\n\t\t#{ fired_for.inspect}" 
+#else
+#puts " failed on #{f}" + [fired_for[f],trigger[f]].inspect   
+#puts "\tNEW MATCH dup\n\t\t#{trigger.inspect}\n\t\t#{ fired_for.inspect}" 
+#end 
               any_matches=true if jwlt
               end
               return false if any_matches 

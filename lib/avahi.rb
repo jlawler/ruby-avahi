@@ -20,8 +20,6 @@ class DBus::Connection
       @buffer += @socket.read_nonblock(MSG_BUF_SIZE)
       @last_success=Time.now
     rescue Errno::EAGAIN => e
-#      STDERR.puts @last_success.inspect
-#      STDERR.puts ["#{e.class} #{e.message}",*e.backtrace].join("\n")
       sleep 1
       retry
     end
@@ -73,7 +71,6 @@ module Avahi
     end
     def same_class? x
       [:stype, :status, :domain, :description, :name, :protocol].inject(true){ |r,att|
-#        STDERR.puts "SC : #{self[att]} #{x[att]} #{r}"
         r and (self[att]==x[att])
       }
     end  
@@ -130,7 +127,6 @@ module Avahi
     def add_service_listeners
 raise "double add" if $SERVICE_LISTENERS
 $SERVICE_LISTENERS=true
-      STDERR.puts "ADDING SERVICE LISTENERS!"
       pass_number = @pass_counter+=1
       raise "Danger, @temp_services is NOT nil!" unless @temp_services.nil?
       @temp_services = Hash.new{|h,e|h[e]=[]}
@@ -155,15 +151,11 @@ $SERVICE_LISTENERS=true
     
     #service callback
     def service_callback description,msg,service_type,pass_number,timestamp
-#STDERR.puts "SERVICE_CALLBACK "+[description,msg].inspect
       case msg.member
         when 'ItemNew' then @service_list.add(add_service_int(description,msg,timestamp),pass_number)
         when "ItemRemove" then   @service_list.remove(msg,pass_number)
         when 'CacheExhausted' then nil
         when 'AllForNow' then 
-#STDERR.puts "CLOSEED : " + msg.inspect
-#STDERR.puts "CLOSEED : " + Avahi.get_service_types.keys.sort.inspect
-#STDERR.puts Avahi.get_service_types[description].inspect + " is closed!"
           @service_list.close_type(service_type,pass_number)
         else STDERR.puts "UNKNOWN MSG #{msg.member}"
       end
@@ -176,19 +168,6 @@ $SERVICE_LISTENERS=true
       p = msg.params
       #params look like this: 0 interface,1 protocol,2 name,3 type,4 domain
       s[:iface],s[:protocol],s[:name],s[:stype],s[:domain] = p[0],p[1],p[2],p[3],p[4]
-      #setup
-      #and add
-#      existing_service = @temp_services[s[:type]].inject(nil){|r,i|r || i if i.same_class?(s)}
-#      if existing_service
-#        existing_service[:iface] << s[:iface].first
-#      else 
-#        @temp_services[s[:type]] << s unless existing_service
-#      end
-#      STDERR.puts "FAKE MERGE " + [existing_service,s].inspect  
-      #RESOLVE - TODO: still blocks, don't know why, guess i broke ruby-dbus again :)
-      #0 interface,1 protocol,2 name,3 type,4 domain,5 host,6 aprotocol,7 address,8 port,9 text,10 flags
-      #res = resolve(p[0],p[2],p[3],p[4])
-      #puts "host: #{res[5]} port: #{res[8]} addr: #{res[7]}"
       s
     end
     
@@ -202,7 +181,7 @@ $SERVICE_LISTENERS=true
     #publish a service  
     def publish(interface, protocol, name, type, port, text, domain = @domain, hostname_fqdn = @hostname_fqdn)
       use_bus{
-      STDERR.puts "call AddService "  + [interface, protocol, 0, name, type, domain, hostname_fqdn, port, text].map{|i|i.inspect}.join(', ')
+      #STDERR.puts "call AddService "  + [interface, protocol, 0, name, type, domain, hostname_fqdn, port, text].map{|i|i.inspect}.join(', ')
       @entry.AddService(interface, protocol, 0, name, type, domain, hostname_fqdn, port, text)
       @entry.Commit()
       }
