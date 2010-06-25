@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'dbus'
-require 'dbus_patch'
 require 'avahi_constants'
 require 'thread'
 require 'avahi_service_list'
